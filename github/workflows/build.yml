@@ -17,20 +17,25 @@ jobs:
         mkdir -p build_dir/DEBIAN
         mkdir -p build_dir/Library/MobileSubstrate/DynamicLibraries
         
-        # گواستنەوەی فایلی دایلیب و لۆگۆ ئەگەر هەبن
-        cp -f *.dylib build_dir/Library/MobileSubstrate/DynamicLibraries/ 2>/dev/null || true
-        cp -f *.png build_dir/Library/MobileSubstrate/DynamicLibraries/ 2>/dev/null || true
+        # گواستنەوەی فایلی دایلیب و لۆگۆ بە سەرکەوتوویی
+        if [ -f "HAMA ⚡️ VIP.dylib" ]; then
+          cp "HAMA ⚡️ VIP.dylib" build_dir/Library/MobileSubstrate/DynamicLibraries/HAMA_VIP.dylib
+        fi
         
-        # دروستکردنی فایلی کۆنتڕۆڵ
+        if [ -f "logo.png" ]; then
+          cp "logo.png" build_dir/Library/MobileSubstrate/DynamicLibraries/logo.png
+        fi
+        
+        # دروستکردنی فایلی کۆنتڕۆڵ بۆ پاکێجەکە
         echo "Package: com.hamavip.pubg" > build_dir/DEBIAN/control
         echo "Name: HAMA VIP iOS" >> build_dir/DEBIAN/control
         echo "Version: 1.0.0" >> build_dir/DEBIAN/control
         echo "Architecture: iphoneos-arm" >> build_dir/DEBIAN/control
-        echo "Maintainer: HAMA VIP  " >> build_dir/DEBIAN/control
+        echo "Maintainer: MATiX" >> build_dir/DEBIAN/control
         echo "Description: HAMA VIP Tweak for PUBG Global and VNG" >> build_dir/DEBIAN/control
-        echo "Author: HAMA VIP" >> build_dir/DEBIAN/control
+        echo "Author: MATiX" >> build_dir/DEBIAN/control
         
-        # دروستکردنی پاکێجەکە
+        # دروستکردنی فایلی نهایی .deb
         sudo apt-get update && sudo apt-get install -y dpkg-dev
         dpkg-deb --build build_dir HAMA-VIP-iOS-Package.deb
         
