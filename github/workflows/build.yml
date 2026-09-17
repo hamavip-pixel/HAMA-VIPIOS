@@ -9,43 +9,36 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout Repository
+    - name: Checkout Code
       uses: actions/checkout@v4
 
-    - name: Package Dylib & Assets
+    - name: Create Deb Package
       run: |
-        echo "Packaging HAMA VIP iOS for PUBG Global & VNG..."
-        mkdir -p packages/DEBIAN
-        mkdir -p packages/Library/MobileSubstrate/DynamicLibraries
+        mkdir -p build_dir/DEBIAN
+        mkdir -p build_dir/Library/MobileSubstrate/DynamicLibraries
         
-        # پشکنین و گواستنەوەی دایلیب و لۆگۆ
-        if [ -f "HAMA ⚡️ VIP.dylib" ]; then
-          cp "HAMA ⚡️ VIP.dylib" packages/Library/MobileSubstrate/DynamicLibraries/HAMA_VIP.dylib
-        elif [ -f "HAMA-VIP.dylib" ]; then
-          cp "HAMA-VIP.dylib" packages/Library/MobileSubstrate/DynamicLibraries/HAMA_VIP.dylib
-        fi
+        # گواستنەوەی فایلی دایلیب و لۆگۆ ئەگەر هەبن
+        cp -f *.dylib build_dir/Library/MobileSubstrate/DynamicLibraries/ 2>/dev/null || true
+        cp -f *.png build_dir/Library/MobileSubstrate/DynamicLibraries/ 2>/dev/null || true
         
-        if [ -f "logo.png" ]; then
-          cp logo.png packages/Library/MobileSubstrate/DynamicLibraries/logo.png
-        fi
+        # دروستکردنی فایلی کۆنتڕۆڵ
+        echo "Package: com.hamavip.pubg" > build_dir/DEBIAN/control
+        echo "Name: HAMA VIP iOS" >> build_dir/DEBIAN/control
+        echo "Version: 1.0.0" >> build_dir/DEBIAN/control
+        echo "Architecture: iphoneos-arm" >> build_dir/DEBIAN/control
+        echo "Maintainer: HAMA VIP  " >> build_dir/DEBIAN/control
+        echo "Description: HAMA VIP Tweak for PUBG Global and VNG" >> build_dir/DEBIAN/control
+        echo "Author: HAMA VIP" >> build_dir/DEBIAN/control
         
-        # دروستکردنی فایلی control بۆ دێب
-        echo "Package: com.hamavip.ios" > packages/DEBIAN/control
-        echo "Name: HAMA VIP iOS" >> packages/DEBIAN/control
-        echo "Version: 1.0.0" >> packages/DEBIAN/control
-        echo "Architecture: iphoneos-arm" >> packages/DEBIAN/control
-        echo "Maintainer: HAMA VIP" >> packages/DEBIAN/control
-        echo "Description: HAMA VIP Tweak for PUBG Global and VNG" >> packages/DEBIAN/control
-        echo "Author: HAMA VIP" >> packages/DEBIAN/control
-        
-        # دروستکردنی فایلی نهایی .deb
+        # دروستکردنی پاکێجەکە
         sudo apt-get update && sudo apt-get install -y dpkg-dev
-        dpkg-deb --build packages HAMA-VIP-iOS-Package.deb
-        mkdir -p final_pkg
-        mv HAMA-VIP-iOS-Package.deb final_pkg/
+        dpkg-deb --build build_dir HAMA-VIP-iOS-Package.deb
+        
+        mkdir -p final_output
+        mv HAMA-VIP-iOS-Package.deb final_output/
 
-    - name: Upload Artifact
+    - name: Upload .deb Artifact
       uses: actions/upload-artifact@v4
       with:
         name: HAMA-VIP-iOS-Package
-        path: final_pkg/*.deb
+        path: final_output/*.deb
