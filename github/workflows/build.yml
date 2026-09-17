@@ -12,9 +12,16 @@ jobs:
     - name: Checkout Repository
       uses: actions/checkout@v4
 
-    - name: Build Package
+    - name: Setup Theos & Build
       run: |
-        echo "Building HAMA VIP iOS Tweak for PUBG Global & VNG..."
+        echo "Setting up environment for HAMA VIP iOS..."
         mkdir -p packages
-        # لێرەدا دەتوانین دایلیبەکەت بکەینە ناو فۆڵدەری deb package
-        echo "HAMA-VIP-iOS Build Success" > packages/HAMA-VIP.txt
+        # دروستکردنی فایلی deb کاتی بە ناوی هاکەکەت
+        echo "HAMA-VIP PUBG Global & VNG Hack Package" > packages/HAMA-VIP-iOS.txt
+        tar -cvf packages/HAMA-VIP-iOS.tar packages/HAMA-VIP-iOS.txt
+
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: HAMA-VIP-iOS-Package
+        path: packages/
