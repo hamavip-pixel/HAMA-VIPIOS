@@ -1,4 +1,4 @@
-name: Build iOS Tweak
+name: Build HAMA VIP Universal Tweak
 
 on:
   push:
@@ -6,18 +6,21 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
 
     steps:
     - name: Checkout Code
       uses: actions/checkout@v4
+
+    - name: Build Dylib from main.mm
+      run: |
+        xcrun -sdk iphoneos clang -arch arm64 -dynamiclib -install_name @executable_path/Frameworks/HAMA_VIP.dylib main.mm -o "HAMA ⚡️ VIP.dylib" -framework Foundation -framework UIKit
 
     - name: Create Deb Package
       run: |
         mkdir -p build_dir/DEBIAN
         mkdir -p build_dir/Library/MobileSubstrate/DynamicLibraries
         
-        # گواستنەوەی فایلی دایلیب و لۆگۆ بە سەرکەوتوویی
         if [ -f "HAMA ⚡️ VIP.dylib" ]; then
           cp "HAMA ⚡️ VIP.dylib" build_dir/Library/MobileSubstrate/DynamicLibraries/HAMA_VIP.dylib
         fi
@@ -26,24 +29,21 @@ jobs:
           cp "logo.png" build_dir/Library/MobileSubstrate/DynamicLibraries/logo.png
         fi
         
-        # دروستکردنی فایلی کۆنتڕۆڵ بۆ پاکێجەکە
-        echo "Package: com.hamavip.pubg" > build_dir/DEBIAN/control
-        echo "Name: HAMA VIP iOS" >> build_dir/DEBIAN/control
+        echo "Package: com.hamavip.universal" > build_dir/DEBIAN/control
+        echo "Name: HAMA ⚡️ VIP Universal" >> build_dir/DEBIAN/control
         echo "Version: 1.0.0" >> build_dir/DEBIAN/control
         echo "Architecture: iphoneos-arm" >> build_dir/DEBIAN/control
-        echo "Maintainer: MATiX" >> build_dir/DEBIAN/control
-        echo "Description: HAMA VIP Tweak for PUBG Global and VNG" >> build_dir/DEBIAN/control
-        echo "Author: MATiX" >> build_dir/DEBIAN/control
+        echo "Maintainer: HAMA ⚡️ VIP" >> build_dir/DEBIAN/control
+        echo "Description: HAMA VIP Universal Tweak working across all apps" >> build_dir/DEBIAN/control
+        echo "Author: HAMA ⚡️ VIP" >> build_dir/DEBIAN/control
         
-        # دروستکردنی فایلی نهایی .deb
-        sudo apt-get update && sudo apt-get install -y dpkg-dev
-        dpkg-deb --build build_dir HAMA-VIP-iOS-Package.deb
+        dpkg-deb --build build_dir HAMA-VIP-Universal-Package.deb
         
         mkdir -p final_output
-        mv HAMA-VIP-iOS-Package.deb final_output/
+        mv HAMA-VIP-Universal-Package.deb final_output/
 
     - name: Upload .deb Artifact
       uses: actions/upload-artifact@v4
       with:
-        name: HAMA-VIP-iOS-Package
+        name: HAMA-VIP-Universal-Package
         path: final_output/*.deb
