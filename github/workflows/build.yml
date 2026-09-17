@@ -34,9 +34,9 @@ jobs:
         echo "Name: HAMA VIP iOS" >> packages/DEBIAN/control
         echo "Version: 1.0.0" >> packages/DEBIAN/control
         echo "Architecture: iphoneos-arm" >> packages/DEBIAN/control
-        echo "Maintainer: MATiX" >> packages/DEBIAN/control
+        echo "Maintainer: HAMA VIP" >> packages/DEBIAN/control
         echo "Description: HAMA VIP Tweak for PUBG Global and VNG" >> packages/DEBIAN/control
-        echo "Author: MATiX" >> packages/DEBIAN/control
+        echo "Author: HAMA VIP" >> packages/DEBIAN/control
         
         # دروستکردنی فایلی نهایی .deb
         sudo apt-get update && sudo apt-get install -y dpkg-dev
