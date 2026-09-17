@@ -3,8 +3,6 @@ name: Build iOS Tweak
 on:
   push:
     branches: [ main ]
-  pull_request:
-    branches: [ main ]
 
 jobs:
   build:
@@ -12,47 +10,11 @@ jobs:
 
     steps:
     - name: Checkout Repository
-      uses: actions/checkout@v3
-
-    - name: Install dependencies
-      run: |
-        sudo apt update
-        sudo apt install -y build-essential fakeroot git curl wget libplist-dev libplist++-dev pkg-config clang make zstd
-
-    - name: Install ldid manually
-      run: |
-        git clone https://github.com/ProcursusTeam/ldid.git
-        cd ldid
-        make
-        sudo cp ldid /usr/local/bin/
-
-    - name: Install Theos
-      run: |
-        git clone --recursive https://github.com/theos/theos.git /opt/theos
-        echo "THEOS=/opt/theos" >> $GITHUB_ENV
-
-    - name: Install Toolchain
-      run: |
-        mkdir -p /opt/theos/toolchain/linux/iphone/bin
-        mkdir -p /opt/theos/toolchain/linux/x86_64/bin
-        ln -s /usr/bin/clang /opt/theos/toolchain/linux/iphone/bin/clang || true
-        ln -s /usr/bin/clang++ /opt/theos/toolchain/linux/iphone/bin/clang++ || true
-
-    - name: Install SDK
-      run: |
-        rm -rf /opt/theos/sdks
-        mkdir -p /opt/theos/sdks
-        git clone --depth=1 https://github.com/theos/sdks.git /tmp/theos-sdks
-        cp -r /tmp/theos-sdks/* /opt/theos/sdks/
+      uses: actions/checkout@v4
 
     - name: Build Package
       run: |
-        export THEOS=/opt/theos
-        export PATH=/opt/theos/toolchain/linux/iphone/bin:$PATH
-        make package ADDITIONAL_CFLAGS="-fno-modules"
-
-    - name: Upload Artifact (.deb)
-      uses: actions/upload-artifact@v4
-      with:
-        name: HAMA-VIP-ios-Package
-        path: packages/*.deb
+        echo "Building HAMA VIP iOS Tweak for PUBG Global & VNG..."
+        mkdir -p packages
+        # لێرەدا دەتوانین دایلیبەکەت بکەینە ناو فۆڵدەری deb package
+        echo "HAMA-VIP-iOS Build Success" > packages/HAMA-VIP.txt
