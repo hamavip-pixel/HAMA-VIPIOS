@@ -12,16 +12,40 @@ jobs:
     - name: Checkout Repository
       uses: actions/checkout@v4
 
-    - name: Setup Theos & Build
+    - name: Package Dylib & Assets
       run: |
-        echo "Setting up environment for HAMA VIP iOS..."
-        mkdir -p packages
-        # دروستکردنی فایلی deb کاتی بە ناوی هاکەکەت
-        echo "HAMA-VIP PUBG Global & VNG Hack Package" > packages/HAMA-VIP-iOS.txt
-        tar -cvf packages/HAMA-VIP-iOS.tar packages/HAMA-VIP-iOS.txt
+        echo "Packaging HAMA VIP iOS for PUBG Global & VNG..."
+        mkdir -p packages/DEBIAN
+        mkdir -p packages/Library/MobileSubstrate/DynamicLibraries
+        
+        # پشکنین و گواستنەوەی دایلیب و لۆگۆ
+        if [ -f "HAMA ⚡️ VIP.dylib" ]; then
+          cp "HAMA ⚡️ VIP.dylib" packages/Library/MobileSubstrate/DynamicLibraries/HAMA_VIP.dylib
+        elif [ -f "HAMA-VIP.dylib" ]; then
+          cp "HAMA-VIP.dylib" packages/Library/MobileSubstrate/DynamicLibraries/HAMA_VIP.dylib
+        fi
+        
+        if [ -f "logo.png" ]; then
+          cp logo.png packages/Library/MobileSubstrate/DynamicLibraries/logo.png
+        fi
+        
+        # دروستکردنی فایلی control بۆ دێب
+        echo "Package: com.hamavip.ios" > packages/DEBIAN/control
+        echo "Name: HAMA VIP iOS" >> packages/DEBIAN/control
+        echo "Version: 1.0.0" >> packages/DEBIAN/control
+        echo "Architecture: iphoneos-arm" >> packages/DEBIAN/control
+        echo "Maintainer: MATiX" >> packages/DEBIAN/control
+        echo "Description: HAMA VIP Tweak for PUBG Global and VNG" >> packages/DEBIAN/control
+        echo "Author: MATiX" >> packages/DEBIAN/control
+        
+        # دروستکردنی فایلی نهایی .deb
+        sudo apt-get update && sudo apt-get install -y dpkg-dev
+        dpkg-deb --build packages HAMA-VIP-iOS-Package.deb
+        mkdir -p final_pkg
+        mv HAMA-VIP-iOS-Package.deb final_pkg/
 
     - name: Upload Artifact
       uses: actions/upload-artifact@v4
       with:
         name: HAMA-VIP-iOS-Package
-        path: packages/
+        path: final_pkg/*.deb
