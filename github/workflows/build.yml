@@ -21,7 +21,7 @@ jobs:
         mkdir -p build_dir/DEBIAN
         mkdir -p build_dir/Library/MobileSubstrate/DynamicLibraries
         
-        if [ -f "HAMA ⚡️ VIP.dylib" ]; then
+        if [ -f "HAMA ⚡️ VIP.dylib" ]; then 
           cp "HAMA ⚡️ VIP.dylib" build_dir/Library/MobileSubstrate/DynamicLibraries/HAMA_VIP.dylib
         fi
         
